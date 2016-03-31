@@ -59,7 +59,7 @@ hr
 /**header section**/
 .main-header
 {
-	background: url("img/picjumbo-bg5.jpg") 0% 0% / 100% no-repeat fixed;
+	background: url("img/alzheimers-disease_1125x930.jpg") 0% 0% / 100% no-repeat fixed;
 	width: 100%;
 	float: left;
 	background-size: cover;
@@ -380,7 +380,7 @@ hr
 }
 .client blockquote .degi
 {
-	margin: 0px;	
+	margin: 0px;
 }
 .txt-comma
 {
@@ -413,7 +413,7 @@ hr
 	float: left;
 	background-color: #fff;
 	padding: 80px 0px 53px 0px;
-	
+
 }
 .news .news-sec
 {
@@ -441,10 +441,10 @@ hr
 	font-size: 13px;
 	line-height: 22px;
 }
-.news .news-sec .news-colm .news-itm a 
+.news .news-sec .news-colm .news-itm a
 {
 	display: inline-block;
-	color: rgb(248, 75, 74);	
+	color: rgb(248, 75, 74);
 	margin: 10px 0px;
 	text-decoration: none;
 	border-radius: 1px;

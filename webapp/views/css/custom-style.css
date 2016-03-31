@@ -1,0 +1,11 @@
+
+#result-terms
+{
+  border-color: grey;
+}
+#result-terms > a{
+	cursor:pointer;
+}
+#results-div a{
+	cursor:pointer;
+}

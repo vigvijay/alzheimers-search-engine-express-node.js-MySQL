@@ -3,17 +3,68 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title>Lithe</title>
+	<title> Information Extractor for Alzhemiers </title>
+	<link rel="icon" type="image/png"  href="img/logo.png">
 	<link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700|Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
 	<link href="css/font-awesome.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="css/custom-style.css">
 	<link rel="stylesheet" type="text/css" href="css/owl.carousel.css">
-  	<script src="jquery.quovolver.min.js"></script>
+
 	<!--[if lt IE 9]-->
 	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 	<!--[endif]-->
+	<script>
+		var data = <%- result %>;
+		data.sort(function(a, b) {
+	   	return b.value  - a.value });
+		//console.log(data);
+		document.addEventListener('DOMContentLoaded', function() {
+
+			var mydiv = document.getElementById("result-terms");
+			for ( var resultNum in data)
+			{
+				if(resultNum < 15){
+					var aTag = document.createElement('a');
+					var att = document.createAttribute('class');
+					var brTag = document.createElement('br');
+					att.value = 'degi';
+					//aTag.onclick = function(){getResultsFunction();};
+					var keyword = data[resultNum].key;
+					aTag.setAttribute('data-keyword',keyword);
+					//aTag.setAttribute('href','');
+					aTag.innerHTML = keyword + " (" +  data[resultNum].value + ") ";
+					aTag.setAttributeNode(att);
+					mydiv.appendChild(aTag);
+					mydiv.appendChild(brTag);
+					resultNum++;
+				}
+				else{
+					break;
+				}
+			}
+
+			// var mydiv = document.getElementById("results-div");
+			// for ( var resultNum in data)
+			// {
+			// 	var block = document.createElement("BLOCKQUOTE");
+			// 		var aTag = document.createElement('a');
+			// 	var pTag = document.createElement('p');
+			// 	var brTag = document.createElement('br');
+			// 		 aTag.setAttribute('href',data[resultNum].id);
+			// 		 aTag.innerHTML = data[resultNum].full_name;
+			// 	 pTag.innerHTML = "This is a description of the page thwt has been retrieved from the databse."
+			// 	 block.appendChild(aTag);
+			// 	 block.appendChild(pTag);
+			// 	 block.appendChild(brTag);
+			// 		 mydiv.appendChild(block);
+			// }
+	 }, false);
+
+
+	</script>
 </head>
 	<body>
 		<!--header starts-->
@@ -31,12 +82,12 @@
 									       <span class="icon-bar"></span>
 									       <span class="icon-bar"></span>
 									    </button>
-									    <a class="navbar-brand" href="#"><span class="grey">ALZHEIMERS</span>SEARCH ENGINE</a>
+									    <a class="navbar-brand" href="/"><span class="grey">ALZHEIMERS</span>SEARCH ENGINE</a>
 									</div>
 									<div class="collapse navbar-collapse navbar-right" id="myNavbar">
 									    <ul class="nav navbar-nav">
 									     	<li class="active"><a href="#">Home</a></li>
-									        
+
 									    </ul>
 									</div>
 								</nav>
@@ -55,17 +106,17 @@
 							<div class="banner-search col-md-offset-2 col-md-8 col-md-offset-2">
 								<div class="col-md-3">
 									<div class="form-group">
-									<input type="text" class="form-control sellone" placeholder="Country">
+									<input type="text" class="form-control sellone" placeholder="What/Who">
 									 </div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-									  <input type="text" class="form-control selltwo" placeholder="Author"">
+									  <input type="text" class="form-control selltwo" placeholder="Verb Phrase"">
 									</div>
 								</div>
 								<div class="col-md-3">
 									<div class="form-group">
-									  <input type="text" class="form-control selltwo" placeholder="Year">
+									  <input type="text" class="form-control selltwo" placeholder="What">
 									</div>
 								</div>
 								<div class="col-md-3">
@@ -74,7 +125,7 @@
 									</div>
 								</div>
 							</div>
-														
+
 						</div>
 					</div>
 				</div>
@@ -82,8 +133,8 @@
 			<!--banner ends-->
 		</header>
 		<!--header ends-->
-		
-		
+
+
 		<!--testimonial section-->
 		<div class="client">
 			<div class="container">
@@ -94,27 +145,34 @@
 								<h2>Results for <span>the triples</span></h2>
 							</div>
 			      		</div>
-			            <div class="col-md-12 col-sm-12 col-xs-12">
-			            	<div class="quotes text-left">
-			                	<blockquote>
+								<div class="col-md-3 col-sm-3 col-xs-3">
+									<div id="result-terms">
+											<!-- <p>Result 1.</p>
+											<p class="name">Paper Details</p>
+											<p class="degi">Paper URL</p> -->
+										</div>
+								</div>
+			            <div class="col-md-9 col-sm-9 col-xs-9">
+			            	<div id="results-div">
+			                	<!-- <blockquote>
 			                    	<p>Result 1.</p>
-			                        <p class="name">Paper Details</p>	
+			                        <p class="name">Paper Details</p>
 			                        <p class="degi">Paper URL</p>
 			                    </blockquote>
 			                    <blockquote>
 			                    	<p>Result 2</p>
 			                        <p class="name">Paper Details</p>
 			                        <p class="degi">Paper URL</p>
-			                    </blockquote>
+			                    </blockquote> -->
 			                </div>
 			            </div>
-			        </div>       
+			        </div>
 		        </div>
 		    </div>
 		</div>
 
-	
-		
+
+
 		<footer class="footer">
 			<div class="container">
 				<div class="row text-center">
@@ -129,7 +187,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-12 text-center">
-						<p>2015 &copy; All Rights Reserved. Designed By <a href="http://www.html5layouts.com">HTML5LAYOUTS</a> using <a href="https://pixabay.com">freedigitalphotos</a> and <a href="https://picjumbo.com">picjumbo</a> images</a> | <a href="http://vectortoons.com/">Get Vector Graphics</a></p>
+						<p>2016 &copy; All Rights Reserved.
 					</div>
 				</div>
 			</div>
@@ -137,10 +195,12 @@
 		<script src="js/jquery.min.js"></script>
     	<script src="js/bootstrap.min.js"></script>
 		<script src="js/jquery-1.11.3.min.js"></script>
-		<script src="js/jquery-1.9.1.min.js"></script> 
+		<script src="js/jquery-1.9.1.min.js"></script>
     	<script src="js/owl.carousel.js"></script>
+		<script src="js/jquery.quovolver.min.js"></script>
     	<script src="js/jquery.mixitup.js" type="text/javascript"></script>
     	<script type="text/javascript" src="js/jquery.quovolver.js"></script>
+			<script src="js/actions.js"></script>
     	<!--for smooth scrolling-->
 		    	<script>
 			$(function() {
@@ -174,14 +234,14 @@
     	</script>
 
     	<script type="text/javascript">
-		   
+
 
 		    $(document).ready(function() {
-		     
+
 		      var owl = $("#owl-demo");
-		     
+
 		      owl.owlCarousel();
-		     
+
 		      // Custom Navigation Events
 		      $(".next").click(function(){
 		        owl.trigger('owl.next');
@@ -189,7 +249,7 @@
 		      $(".prev").click(function(){
 		        owl.trigger('owl.prev');
 		      })
-		     
+
 		    });
 
 
@@ -214,7 +274,7 @@
 		        // add buttons helper (requires buttons helper js and css files)
 		        helpers: {
 		            buttons: {}
-		        } 
+		        }
 		    });
 		    // filter selector
 		    $(".filter").on("click", function () {
@@ -224,23 +284,23 @@
 		            $(".filter").removeClass("active");
 		            $this.addClass("active"); // set the active tab
 		            // get the data-rel value from selected tab and set as filter
-		            var $filter = $this.data("rel"); 
+		            var $filter = $this.data("rel");
 		            // if we select view all, return to initial settings and show all
-		            $filter == 'all' ? 
+		            $filter == 'all' ?
 		                $(".fancybox")
 		                .attr("data-fancybox-group", "gallery")
 		                .not(":visible")
-		                .fadeIn() 
+		                .fadeIn()
 		            : // otherwise
 		                $(".fancybox")
 		                .fadeOut(0)
 		                .filter(function () {
 		                    // set data-filter value as the data-rel value of selected tab
-		                    return $(this).data("filter") == $filter; 
+		                    return $(this).data("filter") == $filter;
 		                })
 		                // set data-fancybox-group and show filtered elements
 		                .attr("data-fancybox-group", $filter)
-		                .fadeIn(1000); 
+		                .fadeIn(1000);
 		        } // if
 		    }); // on
 		}); // ready
