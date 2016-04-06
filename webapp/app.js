@@ -30,10 +30,11 @@ var mysql      = require('mysql');
 
 var pool      =    mysql.createPool({
     connectionLimit : 100, //important
-    host     : '127.0.0.1',
-    user     : 'root',
-    password : 'pulse',
-    database : 'database_design',
+    host     : 'beat.comp.ae.keio.ac.jp',
+	port     : *,
+    user     : 'user',
+    password : '*******',
+    database : 'ad_reverb',
     debug    :  false
 });
 
@@ -48,11 +49,49 @@ function handle_database(req, res) {
 
         console.log('connected as id ' + connection.threadId);
 
-        console.log(req);
+       // console.log(req);
         // hardcoding input data at the moment
-        var sentence_term = 'alzheimer\'s disease';
-        connection.query("select s,p,o, count(o) as c from triples where (s =? or s ='ad' or s ='alzheimer disease' or s ='alzheimer' ) and p='be' Group by o ORDER BY count(o) DESC"
-        , (sentence_term),function(err,rows){
+        var sentence_triple1 = req.query.triple1;
+		var sentence_triple2 = req.query.triple2;
+		var sentence_triple3 = req.query.triple3;
+		
+		//Parsing the triples based on ";"
+		var triple1_synonymns = sentence_triple1.split(';');
+		var triple2_synonymns = sentence_triple2.split(';');		
+		var triple3_synonymns = sentence_triple3.split(';');
+		
+		var triple1_query="(";
+		for(i=0;i<triple1_synonymns.length;i++){
+			if(i==triple1_synonymns.length-1)
+				triple1_query+=" s=?";
+			else
+				triple1_query+=" s=? or";
+		}
+		triple1_query+=")";
+		
+		var triple2_query="(";
+		for(i=0;i<triple2_synonymns.length;i++){
+			if(i==triple2_synonymns.length-1)
+				triple2_query+=" p=?";
+			else
+				triple2_query+=" p=? or";
+		}
+		triple2_query+=")";
+		
+		console.log(triple2_query);
+		
+		//To modify after understanding what to do with triple3
+		/*var triple3_query="(";
+		for(i=0;i<triple3_synonymns.length;i++){
+			if(i==triple3_synonymns.length-1)
+				triple3_query+=" p=?";
+			else
+				triple3_query+=" p=? or";
+		}
+		triple3_query+=")";*/
+		
+        connection.query("select s,p,o, count(o) as c from triples where "+ triple1_query +" and "+ triple2_query +" Group by o ORDER BY count(o) DESC"
+        , (triple1_synonymns.concat(triple2_synonymns)),function(err,rows){
             connection.release();
             if(!err) {
               var arr = [];
@@ -106,7 +145,7 @@ function mysql_real_escape_string (str) {
     });
 }
 app.get('/q', function (req, res) {
-   handle_database(req.query.triple1, res);
+   handle_database(req, res);
    // Prepare output in JSON format
    /*response = {
        first_name:req.query.triple1,
@@ -114,6 +153,7 @@ app.get('/q', function (req, res) {
    };*/
    //console.log(response);
 });
+
 app.get('/get-link', function (req, res) {
   pool.getConnection(function(err,connection){
       if (err) {

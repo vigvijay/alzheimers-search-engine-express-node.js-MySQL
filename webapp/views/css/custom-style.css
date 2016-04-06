@@ -9,3 +9,7 @@
 #results-div a{
 	cursor:pointer;
 }
+.search-instructions > p{
+	color:white;
+	font-size:14px;
+}
