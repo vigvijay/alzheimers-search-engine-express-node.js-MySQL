@@ -30,10 +30,11 @@ var mysql      = require('mysql');
 
 var pool      =    mysql.createPool({
     connectionLimit : 100, //important
-    host     : '127.0.0.1',
-    user     : 'root',
-    password : 'pulse',
-    database : 'database_design',
+    host     : 'beat.comp.ae.keio.ac.jp',
+    port     : 49155,
+    user     : 'user',
+    password : 'yamaguti',
+    database : 'ad_reverb',
     debug    :  false
 });
 
@@ -122,10 +123,13 @@ app.get('/get-link', function (req, res) {
         return;
       }
       console.log('connected as id ' + connection.threadId);
-
-      console.log(req.query.key);
+      var where_clause = " ";
+      if(req.query.filter == "true"){
+        where_clause += " and year = " + req.query.year;
+      }
+      
       var sentence_term = 'alzheimer\'s disease';
-      connection.query("select s,p,o, sentence from  triples, sentences where (s = ? or s ='ad' or s ='alzheimer disease' or s ='alzheimer' ) and p='be' and o= ? and triples.sent_id=sentences.sent_id"
+      connection.query("select s,p,o, triples.pmid, sentence, year from  triples, sentences, years where (s = ? or s ='ad' or s ='alzheimer disease' or s ='alzheimer' )" + where_clause + " and p='be' and o= ? and triples.sent_id=sentences.sent_id and triples.pmid = years.pmid"
       , [sentence_term, req.query.key], function(err,rows){
           connection.release();
           if(!err) {
@@ -133,13 +137,14 @@ app.get('/get-link', function (req, res) {
             for(var dataObj in rows){
               arr.push({
                 'key':rows[dataObj].sentence,
-                'value':0
+                'value':"http://www.ncbi.nlm.nih.gov/pubmed/?term="+ rows[dataObj].pmid
               });
             }
+            console.log(arr.length);
               res.send((arr));
             }
           else{
-            //console.log(err);
+            console.log(err);
           }
         });
 
