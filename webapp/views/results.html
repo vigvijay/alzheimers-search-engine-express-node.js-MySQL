@@ -34,6 +34,9 @@
 					//aTag.onclick = function(){getResultsFunction();};
 					var keyword = data[resultNum].key;
 					aTag.setAttribute('data-keyword',keyword);
+					aTag.setAttribute('data-subject',data[resultNum].subject);
+					aTag.setAttribute('data-predicate',data[resultNum].predicate);
+
 					//aTag.setAttribute('href','');
 					aTag.innerHTML = keyword + " (" +  data[resultNum].value + ") ";
 					aTag.setAttributeNode(att);
@@ -109,14 +112,19 @@
 									<input type="text" class="form-control sellone" placeholder="Author">
 									 </div>
 								</div>
-								<div class="col-md-6">
+								<div class="col-md-4">
 									<div class="form-group">
-									  <input type="text" class="form-control selltwo" placeholder="Journal">
+									  <input type="text" class="form-control selltwo" placeholder="Title">
 									</div>
 								</div>
 								<div class="col-md-3">
 									<div class="form-group">
-									  <input type="text" id="year_input" class="form-control selltwo" placeholder="Year">
+									  <input type="text" class="form-control selltwo" placeholder="Journal">
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="form-group">
+									  <input type="number" id="year_input" class="form-control selltwo"  min="1000" max="9999" placeholder="Year">
 									</div>
 								</div>
 								<div class="col-md-3">
@@ -142,7 +150,7 @@
 		    		<div class="cli-info">
 			        	<div class="col-md-12 col-sm-12 col-xs-12">
 			        		<div class="sec-head text-left" style="padding-bottom:50px;">
-								<h2>Results for <span>the triples</span></h2>
+								<h2>Results for <span>the triples</span><span id="filterText"> </span> </h2>
 							</div>
 			      		</div>
 								<div class="col-md-3 col-sm-3 col-xs-3">

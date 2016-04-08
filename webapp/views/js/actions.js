@@ -1,49 +1,96 @@
 $(document).ready(function(){
+  var keywordClicked;
+  var subClicked;
+  var predClicked;
   $('.degi').click(function(){
-    //alert($(this).data('keyword'));
+    keywordClicked = ($(this).data('keyword'));
+    subClicked = $(this).data('subject');
+    predClicked = $(this).data('predicate');
     $.ajax({
       url: '/get-link',
       type: 'GET',
       dataType: 'json',
-      data: {'key' : $(this).data('keyword'), 'filter':false },
+      data: {'key' : $(this).data('keyword'), 'filter':false, 'sub': subClicked, 'pred' : predClicked },
       success: function(result_data){
-      $('.degi').myfunction(result_data);
+      $('.degi').clearFilterInputs();
+      $('#filterText').text("");
+      $('.degi').resultHandlerFunction(result_data);
       }
     });
   });
 
   $('#filter').click(function(){
       //$('#filter').myfunction();
-      $.ajax({
-        url: '/get-link',
-        type: 'GET',
-        dataType: 'json',
-        data: {'key' : $('.degi').data('keyword'), 'filter':true, 'year' : $('#year_input').val()},
-        success: function(result_data){
-        $('.filter').myfunction(result_data);
+      if(($('#year_input').val() > 9999) || ($('#year_input').val() < 1000)){
+        $('#year_input').addClass("errorBorder");
+        return;
+      }
+      else{
+        if($('#year_input').val().trim() != ""){
+            $('#filterText').text(" Filtered on " + $('#year_input').val());
         }
-      });
+        $.ajax({
+          url: '/get-link',
+          type: 'GET',
+          dataType: 'json',
+          data: {'key' : keywordClicked, 'sub': subClicked, 'pred' : predClicked, 'filter':true, 'year' : $('#year_input').val()},
+          success: function(result_data){
+          $('.filter').resultHandlerFunction(result_data);
+          }
+        });
+        $('#year_input').clearFilterInputs();
+      }
   });
 
   (function( $ ){
-   $.fn.myfunction = function(result_data) {
+   $.fn.resultHandlerFunction = function(result_data) {
      $("#results-div").empty();
-     jQuery.each(result_data, function(index, item) {
-       var block_tag = document.createElement("blockquote");
-       var anchor_tag = document.createElement("a");
+     if(result_data.length > 0){
+       jQuery.each(result_data, function(index, item) {
+         var block_tag = document.createElement("blockquote");
+         var anchor_tag = document.createElement("a");
+         var p_tag = document.createElement("p");
+         $(anchor_tag).append("This is a dummy heading tag");
+         $(anchor_tag).attr("href",result_data[index].value);
+         $(anchor_tag).attr("target",'_blank');
+         var break_tag = document.createElement("br");
+         $(p_tag).append(result_data[index].key); //result_data[index].key;
+         $(block_tag).append(anchor_tag);
+         $(block_tag).append(p_tag);
+         $(block_tag).append(break_tag);
+         $("#results-div").append(block_tag);
+         //console.log("Done");
+       });
+     }
+     else{
        var p_tag = document.createElement("p");
-       $(anchor_tag).append("This is a dummy heading tag");
-       $(anchor_tag).attr("href",result_data[index].value);
-       $(anchor_tag).attr("target",'_blank');
-       var break_tag = document.createElement("br");
-       $(p_tag).append(result_data[index].key); //result_data[index].key;
-       $(block_tag).append(anchor_tag);
+       var block_tag = document.createElement("blockquote");
+       $(p_tag).append("No Results to show");
        $(block_tag).append(p_tag);
-       $(block_tag).append(break_tag);
        $("#results-div").append(block_tag);
-       //console.log("Done");
-     });
+     }
+
       return this;
    };
+   $.fn.clearFilterInputs = function(){
+     $('#year_input').removeClass("errorBorder");
+     $('#year_input').val('');
+   };
   })( jQuery );
+
+  $("#year_input").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A, Command+A
+            (e.keyCode == 65 && ( e.ctrlKey === true || e.metaKey === true ) ) ||
+             // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
 });

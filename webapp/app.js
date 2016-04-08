@@ -31,9 +31,9 @@ var mysql      = require('mysql');
 var pool      =    mysql.createPool({
     connectionLimit : 100, //important
     host     : 'beat.comp.ae.keio.ac.jp',
-	  port     : *,
+    port     :  *,
     user     : 'user',
-    password : '*******',
+    password : '*******'
     database : 'ad_reverb',
     debug    :  false
 });
@@ -98,7 +98,9 @@ function handle_database(req, res) {
               for(var dataObj in rows){
                 arr.push({
                   'key':rows[dataObj].o,
-                  'value':rows[dataObj].c
+                  'value':rows[dataObj].c,
+                  'subject':rows[dataObj].s,
+                  'predicate':rows[dataObj].p
                 });
               }
 
@@ -120,38 +122,8 @@ function handle_database(req, res) {
         });
   });
 }
-function mysql_real_escape_string (str) {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
-        switch (char) {
-            case "\0":
-                return "\\0";
-            case "\x08":
-                return "\\b";
-            case "\x09":
-                return "\\t";
-            case "\x1a":
-                return "\\z";
-            case "\n":
-                return "\\n";
-            case "\r":
-                return "\\r";
-            case "\"":
-            case "'":
-            case "\\":
-            case "%":
-                return "\\"+char; // prepends a backslash to backslash, percent,
-                                  // and double/single quotes
-        }
-    });
-}
 app.get('/q', function (req, res) {
    handle_database(req, res);
-   // Prepare output in JSON format
-   /*response = {
-       first_name:req.query.triple1,
-       last_name:req.query.triple2
-   };*/
-   //console.log(response);
 });
 
 app.get('/get-link', function (req, res) {
@@ -162,14 +134,18 @@ app.get('/get-link', function (req, res) {
         return;
       }
       console.log('connected as id ' + connection.threadId);
+
       var where_clause = " ";
       if(req.query.filter == "true"){
         where_clause += " and year = " + req.query.year;
       }
 
-      var sentence_term = 'alzheimer\'s disease';
-      connection.query("select s,p,o, triples.pmid, sentence, year from  triples, sentences, years where (s = ? or s ='ad' or s ='alzheimer disease' or s ='alzheimer' )" + where_clause + " and p='be' and o= ? and triples.sent_id=sentences.sent_id and triples.pmid = years.pmid"
-      , [sentence_term, req.query.key], function(err,rows){
+      var queryEntries = [];
+      queryEntries.push(req.query.sub);
+      queryEntries.push(req.query.pred);
+      queryEntries.push(req.query.key );
+      connection.query("select s,p,o, triples.pmid, sentence, year from  triples, sentences, years where s = ? " + where_clause + " and p= ? and o= ? and triples.sent_id=sentences.sent_id and triples.pmid = years.pmid"
+      , (queryEntries), function(err,rows){
           connection.release();
           if(!err) {
             var arr = [];
@@ -193,6 +169,7 @@ app.get('/get-link', function (req, res) {
       });
 });
 });
+
 //app.use('/', routes);
 //app.use('/users', users);
 
