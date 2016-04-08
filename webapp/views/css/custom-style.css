@@ -16,3 +16,6 @@
 .errorBorder{
   border-color: red;
 }
+.nav > li > a > img{
+  max-width: 20px;
+}
