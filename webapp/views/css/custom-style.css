@@ -19,3 +19,6 @@
 .nav > li > a > img{
   max-width: 20px;
 }
+.clicked{
+  color: red !important;
+}
