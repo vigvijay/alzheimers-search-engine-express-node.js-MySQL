@@ -3,13 +3,13 @@
 {
   border-color: grey;
 }
-#result-terms > a{
+#result-terms > a, .questionFormat{
 	cursor:pointer;
 }
 #results-div a{
 	cursor:pointer;
 }
-.search-instructions > p{
+.search-instructions {
 	color:white;
 	font-size:14px;
 }
@@ -18,4 +18,8 @@
 }
 .nav > li > a > img{
   max-width: 20px;
+}
+
+.search-Type{
+	color:white;
 }

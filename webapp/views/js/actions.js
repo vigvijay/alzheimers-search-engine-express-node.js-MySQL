@@ -21,25 +21,46 @@ $(document).ready(function(){
 
   $('#filter').click(function(){
       //$('#filter').myfunction();
-      if(($('#year_input').val() > 9999) || ($('#year_input').val() < 1000)){
-        $('#year_input').addClass("errorBorder");
-        return;
-      }
-      else{
-        if($('#year_input').val().trim() != ""){
-            $('#filterText').text(" Filtered on " + $('#year_input').val());
-        }
-        $.ajax({
-          url: '/get-link',
-          type: 'GET',
-          dataType: 'json',
-          data: {'key' : keywordClicked, 'sub': subClicked, 'pred' : predClicked, 'filter':true, 'year' : $('#year_input').val()},
-          success: function(result_data){
-          $('.filter').resultHandlerFunction(result_data);
-          }
-        });
-        $('#year_input').clearFilterInputs();
-      }
+	  
+	  var selected_dateType = $('input:radio[name=DateSearchType]:checked').val();
+	  var year1=$('#year_input').val();
+	  var year2="";
+	  console.log(selected_dateType);
+	  if(selected_dateType == "range"){
+		year2=$('#year_input2').val();
+		if(year2.trim()!=""){
+		  if((year2 > 9999) || (year2 < 1000)){
+			$('#year_input2').addClass("errorBorder");
+			return;
+		}
+		if(year1>year2){
+			$('#year_input2').addClass("errorBorder");
+			return;
+		}
+		}
+	  }
+	  
+	  if(year1.trim()!=""){
+		  if(($('#year_input').val() > 9999) || ($('#year_input').val() < 1000)){
+			$('#year_input').addClass("errorBorder");
+			return;
+		  }
+		  else{
+			if($('#year_input').val().trim() != ""){
+				$('#filterText').text(" Filtered on " + $('#year_input').val());
+			}
+			$.ajax({
+			  url: '/get-link',
+			  type: 'GET',
+			  dataType: 'json',
+			  data: {'key' : keywordClicked, 'sub': subClicked, 'pred' : predClicked, 'filter':true, 'year' : $('#year_input').val(), 'year2' : $('year_input2')},
+			  success: function(result_data){
+			  $('.filter').resultHandlerFunction(result_data);
+			  }
+			});
+			$('#year_input').clearFilterInputs();
+		  }
+	   }
   });
 
   (function( $ ){
@@ -93,4 +114,27 @@ $(document).ready(function(){
             e.preventDefault();
         }
     });
+	
+	$(".questionFormat").click(function(){
+		$('input[name="triple1"]').val("Alzheimer's disease");
+		var selectedObject = $(this).data("value");
+		if(!($.isNumeric(selectedObject)))
+			$('input[name="triple3"]').val(selectedObject);
+		else
+			  $('input[name="triple3"]').val('');
+		var selectedVerb = $(this).data("verb");
+		$('input[name="triple2"]').val(selectedVerb);
+	});
+	
+	
+	$('input[name="DateSearchType"]').click(function(){
+		var selected_dateType = $('input:radio[name=DateSearchType]:checked').val();
+		
+		if(selected_dateType == "range"){
+			alert("here");
+			$('input[name="year_input2"]').prop("disabled",false);
+		}
+	});
+	
 });
+

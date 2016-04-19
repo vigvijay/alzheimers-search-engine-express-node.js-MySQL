@@ -125,9 +125,13 @@
 								<div class="col-md-2">
 									<div class="form-group">
 									  <input type="number" id="year_input" class="form-control selltwo"  min="1000" max="9999" placeholder="Year">
+									  <input type="number" name="year_input2" disabled class="form-control selltwo"  min="1000" max="9999" placeholder="Year">
 									</div>
+									
 								</div>
 								<div class="col-md-3">
+									<input type="radio" name="DateSearchType" value="range" > Range </input>
+									<input type="radio" name="DateSearchType" value="exact" checked> Specific Year </input>
 									<div class="form-btn">
 										<button type="submit" id="filter">Filter</button>
 									</div>
@@ -181,16 +185,7 @@
 
 
 
-		<footer class="footer">
-			<div class="container">
-				<div class="row text-center">
-					<ul class="footer-social">
-						<li><a href="#"><i class="fa fa-google-plus" id="red"></i></a></li>
-						<li><a href="#"><i class="fa fa-linkedin" id="blue"></i></a></li>
-					</ul>
-				</div>
-			</div>
-		</footer>
+		
 		<section class="footer-line">
 			<div class="container">
 				<div class="row">
