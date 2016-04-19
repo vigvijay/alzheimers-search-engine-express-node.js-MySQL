@@ -21,12 +21,15 @@ app.set('view engine', 'html');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 //app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/views')));
 
 
-var mysql      = require('mysql');
+var mysql = require('mysql');
+
 
 var pool      =    mysql.createPool({
     connectionLimit : 100, //important
@@ -36,18 +39,23 @@ var pool      =    mysql.createPool({
     password : '**',
     database : 'ad_reverb',
     debug    :  false
+
 });
 
 function handle_database(req, res) {
 
-    pool.getConnection(function(err,connection){
+    pool.getConnection(function(err, connection) {
         if (err) {
-          connection.release();
-          res.json({"code" : 100, "status" : "Error in connection database"});
-          return;
+            connection.release();
+            res.json({
+                "code": 100,
+                "status": "Error in connection database"
+            });
+            return;
         }
 
         console.log('connected as id ' + connection.threadId);
+
 		         
 	    var searchType = req.query.searchType;
 		
@@ -152,40 +160,49 @@ function handle_database(req, res) {
 		
         connection.query("select s,p,o, count(o) as c from triples where "+ whereClause +" Group by o ORDER BY count(o) DESC"
         , (triple1_synonymns.concat(triple2_synonymns.concat(triple3_synonymns))),function(err,rows){
+
             connection.release();
-            if(!err) {
-              var arr = [];
-              for(var dataObj in rows){
-                arr.push({
-                  'key':rows[dataObj].o,
-                  'value':rows[dataObj].c,
-                  'subject':rows[dataObj].s,
-                  'predicate':rows[dataObj].p
-                });
-              }
+            if (!err) {
+                var arr = [];
+                for (var dataObj in rows) {
+                    arr.push({
+                        'key': rows[dataObj].o,
+                        'value': rows[dataObj].c,
+                        'subject': rows[dataObj].s,
+                        'predicate': rows[dataObj].p,
+                        'inputSubject': sentence_triple1,
+                        'inputPredicate': sentence_triple2,
+                        'inputObject': sentence_triple3
+                    });
+                }
 
 
                 //rows.sort(function(a, b) {return a[0] - b[0]})
                 //res.json(rows);
-                res.render('results', { result: JSON.stringify(arr) });
+                res.render('results', {
+                    result: JSON.stringify(arr)
+                });
                 //res.end();
                 //return rows;
+            } else {
+                console.log(err);
             }
-            else{
-              console.log(err);
-            }
-          });
+        });
 
         connection.on('error', function(err) {
-              res.json({"code" : 100, "status" : "Error in connection database"});
-              return;
+            res.json({
+                "code": 100,
+                "status": "Error in connection database"
+            });
+            return;
         });
-  });
+    });
 }
-app.get('/q', function (req, res) {
-   handle_database(req, res);
+app.get('/q', function(req, res) {
+    handle_database(req, res);
 });
 
+<<<<<<< HEAD
 app.get('/get-link', function (req, res) {
   pool.getConnection(function(err,connection){
       if (err) {
@@ -221,16 +238,16 @@ app.get('/get-link', function (req, res) {
             console.log(arr.length);
               res.send((arr));
             }
-          else{
-            console.log(err);
-          }
         });
 
-      connection.on('error', function(err) {
-            res.json({"code" : 100, "status" : "Error in connection database"});
+        connection.on('error', function(err) {
+            res.json({
+                "code": 100,
+                "status": "Error in connection database"
+            });
             return;
-      });
-});
+        });
+    });
 });
 
 //app.use('/', routes);
@@ -268,12 +285,12 @@ app.use(function(err, req, res, next) {
 });
 */
 app.get('/', function(req, res) {
-   res.sendFile(path.join(__dirname + '/views/index.html'));
+    res.sendFile(path.join(__dirname + '/views/index.html'));
 });
 app.get('/sqlOutput', function(req, res) {
-   handle_database(req,res);
+    handle_database(req, res);
 });
-app.listen(3000, function () {
-  console.log('Application now listening on port 3000!');
+app.listen(3000, function() {
+    console.log('Application now listening on port 3000!');
 });
 module.exports = app;

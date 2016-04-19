@@ -20,6 +20,12 @@
   max-width: 20px;
 }
 
+
 .search-Type{
 	color:white;
+}
+
+.clicked{
+  color: red !important;
+
 }

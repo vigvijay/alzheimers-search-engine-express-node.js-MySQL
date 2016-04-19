@@ -1,23 +1,31 @@
-$(document).ready(function(){
-  var keywordClicked;
-  var subClicked;
-  var predClicked;
-  $('.degi').click(function(){
-    keywordClicked = ($(this).data('keyword'));
-    subClicked = $(this).data('subject');
-    predClicked = $(this).data('predicate');
-    $.ajax({
-      url: '/get-link',
-      type: 'GET',
-      dataType: 'json',
-      data: {'key' : $(this).data('keyword'), 'filter':false, 'sub': subClicked, 'pred' : predClicked },
-      success: function(result_data){
-      $('.degi').clearFilterInputs();
-      $('#filterText').text("");
-      $('.degi').resultHandlerFunction(result_data);
-      }
+$(document).ready(function() {
+    var keywordClicked;
+    var subClicked;
+    var predClicked;
+    $('.degi').click(function() {
+        keywordClicked = ($(this).data('keyword'));
+        subClicked = $(this).data('subject');
+        predClicked = $(this).data('predicate');
+        $('#result-terms').children().removeClass('clicked');
+        $(this).addClass("clicked");
+        $.ajax({
+            url: '/get-link',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                'key': $(this).data('keyword'),
+                'filter': false,
+                'sub': subClicked,
+                'pred': predClicked
+            },
+            success: function(result_data) {
+                $('.degi').clearFilterInputs();
+                $('#filterText').text("");
+                $('.degi').resultHandlerFunction(result_data);
+            }
+        });
     });
-  });
+
 
   $('#filter').click(function(){
       //$('#filter').myfunction();
@@ -63,51 +71,58 @@ $(document).ready(function(){
 	   }
   });
 
-  (function( $ ){
-   $.fn.resultHandlerFunction = function(result_data) {
-     $("#results-div").empty();
-     if(result_data.length > 0){
-       jQuery.each(result_data, function(index, item) {
-         var block_tag = document.createElement("blockquote");
-         var anchor_tag = document.createElement("a");
-         var p_tag = document.createElement("p");
-         $(anchor_tag).append("This is a dummy heading tag");
-         $(anchor_tag).attr("href",result_data[index].value);
-         $(anchor_tag).attr("target",'_blank');
-         var break_tag = document.createElement("br");
-         $(p_tag).append(result_data[index].key); //result_data[index].key;
-         $(block_tag).append(anchor_tag);
-         $(block_tag).append(p_tag);
-         $(block_tag).append(break_tag);
-         $("#results-div").append(block_tag);
-         //console.log("Done");
-       });
-     }
-     else{
-       var p_tag = document.createElement("p");
-       var block_tag = document.createElement("blockquote");
-       $(p_tag).append("No Results to show");
-       $(block_tag).append(p_tag);
-       $("#results-div").append(block_tag);
-     }
+    (function($) {
+        $.fn.resultHandlerFunction = function(result_data) {
+            $("#results-div").empty();
+            if (result_data.length > 0) {
+                jQuery.each(result_data, function(index, item) {
+                    var block_tag = document.createElement("blockquote");
+                    var anchor_tag = document.createElement("a");
+                    var p_tag = document.createElement("p");
+                    $(anchor_tag).append("This is a dummy heading tag");
+                    $(anchor_tag).attr("href", result_data[index].value);
+                    $(anchor_tag).attr("target", '_blank');
+                    var break_tag = document.createElement("br");
+                    //$(p_tag).append(result_data[index].key);
+                    var matchStr = result_data[index].key;
+                    var matchesarr = result_data[index].queryEntries; //matchStr.match(regexp);
+                    jQuery.each(matchesarr, function(index, item) {
+                        matchStr = matchStr.replace(item.toLowerCase(), "<b>" + item.toLowerCase() + "</b>" + " ");
+                        matchStr = matchStr.replace(item.toUpperCase(), "<b>" + item.toUpperCase() + "</b>" + " ");
+                        matchStr = matchStr.replace(item[0].toLowerCase() + item.slice(1), "<b>" + item[0].toLowerCase() + item.slice(1) + "</b>" + " ");
+                    });
+                    $(p_tag).append(matchStr);
+                    $(block_tag).append(anchor_tag);
+                    $(block_tag).append(p_tag);
+                    $(block_tag).append(break_tag);
+                    $("#results-div").append(block_tag);
+                    //console.log("Done");
+                });
+            } else {
+                var p_tag = document.createElement("p");
+                var block_tag = document.createElement("blockquote");
+                $(p_tag).append("No Results to show");
+                $(block_tag).append(p_tag);
+                $("#results-div").append(block_tag);
+            }
 
-      return this;
-   };
-   $.fn.clearFilterInputs = function(){
-     $('#year_input').removeClass("errorBorder");
-     $('#year_input').val('');
-   };
-  })( jQuery );
+            return this;
+        };
+        $.fn.clearFilterInputs = function() {
+            $('#year_input').removeClass("errorBorder");
+            $('#year_input').val('');
+        };
+    })(jQuery);
 
-  $("#year_input").keydown(function (e) {
+    $("#year_input").keydown(function(e) {
         // Allow: backspace, delete, tab, escape, enter and .
         if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
-             // Allow: Ctrl+A, Command+A
-            (e.keyCode == 65 && ( e.ctrlKey === true || e.metaKey === true ) ) ||
-             // Allow: home, end, left, right, down, up
+            // Allow: Ctrl+A, Command+A
+            (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+            // Allow: home, end, left, right, down, up
             (e.keyCode >= 35 && e.keyCode <= 40)) {
-                 // let it happen, don't do anything
-                 return;
+            // let it happen, don't do anything
+            return;
         }
         // Ensure that it is a number and stop the keypress
         if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
