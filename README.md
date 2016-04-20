@@ -7,6 +7,7 @@ Team Members:
 * Vignesh Vijayaraghavan
 
 Steps to run the application:
+
 1. Install Node.js
 2. Run npm install in webapps folder
 3. Install nodemon to monitor the server
@@ -16,6 +17,7 @@ Steps to run the application:
 
 
 Technologies Used:
+
 1. HTML5, CSS
 2. Node.js
 3. Express framework
