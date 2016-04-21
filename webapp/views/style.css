@@ -73,10 +73,11 @@ hr
 }
 .main-header .navigation-bar
 {
-	/*Margin changed by vigvijay from 50 to 5 px*/
+	/*Margin changed by vigvijay from 50 to 5 px and z-index*/
 	margin-top: 5px;
 	width: 100%;
 	float: left;
+	z-index: 9999;
 }
 .main-header .navigation-bar .navbar-default {
 	background-color: #fff;
@@ -93,10 +94,7 @@ hr
 {
 	margin: 0px;
 	padding: 15px 0px;
-	/*Added vigvijay*/
-	position: fixed;
-	width: 93%;
-	z-index: 9999;
+	width: 100%;
 }
 .main-header .navigation-bar .navbar-default .navbar-nav > li
 {

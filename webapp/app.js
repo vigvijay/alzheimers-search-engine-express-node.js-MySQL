@@ -31,14 +31,14 @@ app.use(express.static(path.join(__dirname, '/views')));
 var mysql = require('mysql');
 
 
-var pool      =    mysql.createPool({
-    connectionLimit : 100, //important
-    host     : 'beat.comp.ae.keio.ac.jp',
-    port     :  **,
-    user     : '**',
-    password : '**',
-    database : 'ad_reverb',
-    debug    :  false
+var pool = mysql.createPool({
+    connectionLimit: 100, //important
+    host: 'beat.comp.ae.keio.ac.jp',
+    port: ****,
+    user: '*****',
+    password: '*****',
+    database: 'ad_reverb',
+    debug: false
 
 });
 
@@ -56,110 +56,95 @@ function handle_database(req, res) {
 
         console.log('connected as id ' + connection.threadId);
 
-		         
-	    var searchType = req.query.searchType;
-		
-	   
-        // hardcoding input data at the moment
-        var sentence_triple1 = req.query.triple1;
-		var sentence_triple2 = req.query.triple2;
-		var sentence_triple3 = req.query.triple3;
-		var whereClause=" ";
-		
-		var triple1_synonymns=[];
-		var triple2_synonymns=[];
-		var triple3_synonymns=[];
-		//Parsing the triples based on ";"
-		if(sentence_triple1.trim()!="") 
-		{
-			triple1_synonymns = sentence_triple1.split(';');
-			var triple1_query="(";
-	
-			for(i=0;i<triple1_synonymns.length;i++){
-				if(searchType == "exactMatch")
-				{
-					if(i==triple1_synonymns.length-1)
-						triple1_query+=" s=?";
-					else
-						triple1_query+=" s=? or";
-				}
-				else
-				{
-					if(i==triple1_synonymns.length-1)
-					triple1_query+=" s LIKE ?";
-					else
-					triple1_query+=" s LIKE ? or";
-				}
-			}
-			if(sentence_triple2.trim()!="" || (sentence_triple3.trim()!="") ) 
-				triple1_query+=") and";
-			else
-				triple1_query+=")";
-			whereClause+=triple1_query;
-		}	
-		
-		if(sentence_triple2.trim()!="") 
-		{	
-			triple2_synonymns = sentence_triple2.split(';');
-			var triple2_query="(";
-			for(i=0;i<triple2_synonymns.length;i++){
-				if(searchType == "exactMatch")
-				{
-					if(i==triple2_synonymns.length-1)
-						triple2_query+=" p=?";
-					else
-						triple2_query+=" p=? or";
-				}
-				else
-				{
-					if(i==triple2_synonymns.length-1)
-					triple2_query+=" p LIKE ?";
-					else
-					triple2_query+=" p LIKE ? or";
-				}
-			}
-			if(sentence_triple3.trim()!="") 
-				triple2_query+=") and ";
-			else
-				triple2_query+=")";
-			whereClause+=triple2_query;
-			
-		
-		}
-		
-		if(sentence_triple3.trim()!="") 
-		{
-			triple3_synonymns = sentence_triple3.split(';');
-			var triple3_query="(";
-			for(i=0;i<triple3_synonymns.length;i++){
-				if(searchType == "exactMatch")
-				{
-					if(i==triple3_synonymns.length-1)
-						triple3_query+=" o=?";
-					else
-						triple3_query+=" o=? or";
-				}
-				else
-				{
-					if(i==triple3_synonymns.length-1)
-					triple3_query+=" o LIKE ?";
-					else
-					triple3_query+=" o LIKE ? or";
-				}
-			}
-			
-			triple3_query+=")";
-			whereClause+=triple3_query;
-		}
-			
-		   console.log(triple1_synonymns.concat(triple2_synonymns.concat(triple3_synonymns)));
-			console.log(triple1_query+triple2_query+triple3_query);
-			console.log(whereClause);
-			
-		
-		
-        connection.query("select s,p,o, count(o) as c from triples where "+ whereClause +" Group by o ORDER BY count(o) DESC"
-        , (triple1_synonymns.concat(triple2_synonymns.concat(triple3_synonymns))),function(err,rows){
+
+        var searchType = req.query.searchType;
+
+        var sentence_triple1 = req.query.triple1.toLowerCase();
+        var sentence_triple2 = req.query.triple2.toLowerCase();
+        var sentence_triple3 = req.query.triple3.toLowerCase();
+        var whereClause = " ";
+
+        var triple1_synonymns = [];
+        var triple2_synonymns = [];
+        var triple3_synonymns = [];
+        //Parsing the triples based on ";"
+        if (sentence_triple1.trim() != "") {
+            triple1_synonymns = sentence_triple1.split(';');
+            var triple1_query = "(";
+
+            for (i = 0; i < triple1_synonymns.length; i++) {
+                if (searchType == "exactMatch") {
+                    if (i == triple1_synonymns.length - 1)
+                        triple1_query += " s=?";
+                    else
+                        triple1_query += " s=? or";
+                } else {
+                    if (i == triple1_synonymns.length - 1)
+                        triple1_query += " s LIKE ?";
+                    else
+                        triple1_query += " s LIKE ? or";
+                }
+            }
+            if (sentence_triple2.trim() != "" || (sentence_triple3.trim() != ""))
+                triple1_query += ") and";
+            else
+                triple1_query += ")";
+            whereClause += triple1_query;
+        }
+
+        if (sentence_triple2.trim() != "") {
+            triple2_synonymns = sentence_triple2.split(';');
+            var triple2_query = "(";
+            for (i = 0; i < triple2_synonymns.length; i++) {
+                if (searchType == "exactMatch") {
+                    if (i == triple2_synonymns.length - 1)
+                        triple2_query += " p=?";
+                    else
+                        triple2_query += " p=? or";
+                } else {
+                    if (i == triple2_synonymns.length - 1)
+                        triple2_query += " p LIKE ?";
+                    else
+                        triple2_query += " p LIKE ? or";
+                }
+            }
+            if (sentence_triple3.trim() != "")
+                triple2_query += ") and ";
+            else
+                triple2_query += ")";
+            whereClause += triple2_query;
+
+
+        }
+
+        if (sentence_triple3.trim() != "") {
+            triple3_synonymns = sentence_triple3.split(';');
+            var triple3_query = "(";
+            for (i = 0; i < triple3_synonymns.length; i++) {
+                if (searchType == "exactMatch") {
+                    if (i == triple3_synonymns.length - 1)
+                        triple3_query += " o=?";
+                    else
+                        triple3_query += " o=? or";
+                } else {
+                    if (i == triple3_synonymns.length - 1)
+                        triple3_query += " o LIKE ?";
+                    else
+                        triple3_query += " o LIKE ? or";
+                }
+            }
+
+            triple3_query += ")";
+            whereClause += triple3_query;
+        }
+
+        console.log(triple1_synonymns.concat(triple2_synonymns.concat(triple3_synonymns)));
+        console.log(triple1_query + triple2_query + triple3_query);
+        console.log(whereClause);
+
+
+
+        connection.query("select s,p,o, count(o) as c from triples where " + whereClause + " Group by o ORDER BY count(o) DESC", (triple1_synonymns.concat(triple2_synonymns.concat(triple3_synonymns))), function(err, rows) {
 
             connection.release();
             if (!err) {
@@ -202,41 +187,47 @@ app.get('/q', function(req, res) {
     handle_database(req, res);
 });
 
-<<<<<<< HEAD
-app.get('/get-link', function (req, res) {
-  pool.getConnection(function(err,connection){
-      if (err) {
-        connection.release();
-        res.json({"code" : 100, "status" : "Error in connection database"});
-        return;
-      }
-      console.log('connected as id ' + connection.threadId);
 
-      var where_clause = " ";
-      if(req.query.filter == "true"){
-		 if(req.query.year2.trim()!="")
-			where_clause += " and year >= " + req.query.year + " and year <= " + req.query.year2;
-		else
-			where_clause += " and year = " + req.query.year ;
-      }
+app.get('/get-link', function(req, res) {
+    pool.getConnection(function(err, connection) {
+        if (err) {
+            connection.release();
+            res.json({
+                "code": 100,
+                "status": "Error in connection database"
+            });
+            return;
+        }
+        console.log('connected as id ' + connection.threadId);
 
-      var queryEntries = [];
-      queryEntries.push(req.query.sub);
-      queryEntries.push(req.query.pred);
-      queryEntries.push(req.query.key );
-      connection.query("select s,p,o, triples.pmid, sentence, year from  triples, sentences, years where s = ? " + where_clause + " and p= ? and o= ? and triples.sent_id=sentences.sent_id and triples.pmid = years.pmid"
-      , (queryEntries), function(err,rows){
-          connection.release();
-          if(!err) {
-            var arr = [];
-            for(var dataObj in rows){
-              arr.push({
-                'key':rows[dataObj].sentence,
-                'value':"http://www.ncbi.nlm.nih.gov/pubmed/?term="+ rows[dataObj].pmid
-              });
-            }
-            console.log(arr.length);
-              res.send((arr));
+        var where_clause = " ";
+        if (req.query.filter == "true") {
+            if (req.query.year2.trim() != "")
+                where_clause += " and year >= " + req.query.year + " and year <= " + req.query.year2;
+            else
+                where_clause += " and year = " + req.query.year;
+        }
+
+        var queryEntries = [];
+        queryEntries.push(req.query.sub);
+        queryEntries.push(req.query.pred);
+        queryEntries.push(req.query.key);
+        var querykey = [];
+        querykey.push(req.query.key);
+        console.log(where_clause);
+        connection.query("select s,p,o, triples.pmid, sentence, year from  triples, sentences, years where s = ? " + where_clause + " and p= ? and o= ? and triples.sent_id=sentences.sent_id and triples.pmid = years.pmid", (queryEntries), function(err, rows) {
+            connection.release();
+            if (!err) {
+                var arr = [];
+                for (var dataObj in rows) {
+                    arr.push({
+                        'key': rows[dataObj].sentence,
+                        'value': "http://www.ncbi.nlm.nih.gov/pubmed/?term=" + rows[dataObj].pmid,
+                        'queryEntries': querykey
+                    });
+                }
+                console.log(arr.length);
+                res.send((arr));
             }
         });
 

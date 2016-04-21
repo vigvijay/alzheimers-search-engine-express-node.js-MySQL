@@ -2,6 +2,13 @@ $(document).ready(function() {
     var keywordClicked;
     var subClicked;
     var predClicked;
+    $('#year_input2').hide();
+    $(document).keypress(function(e) {
+        if (e.which == 13) {
+            console.log('You pressed enter!');
+            $('#submitButton').trigger("click");
+        }
+    });
     $('.degi').click(function() {
         keywordClicked = ($(this).data('keyword'));
         subClicked = $(this).data('subject');
@@ -27,49 +34,59 @@ $(document).ready(function() {
     });
 
 
-  $('#filter').click(function(){
-      //$('#filter').myfunction();
-	  
-	  var selected_dateType = $('input:radio[name=DateSearchType]:checked').val();
-	  var year1=$('#year_input').val();
-	  var year2="";
-	  console.log(selected_dateType);
-	  if(selected_dateType == "range"){
-		year2=$('#year_input2').val();
-		if(year2.trim()!=""){
-		  if((year2 > 9999) || (year2 < 1000)){
-			$('#year_input2').addClass("errorBorder");
-			return;
-		}
-		if(year1>year2){
-			$('#year_input2').addClass("errorBorder");
-			return;
-		}
-		}
-	  }
-	  
-	  if(year1.trim()!=""){
-		  if(($('#year_input').val() > 9999) || ($('#year_input').val() < 1000)){
-			$('#year_input').addClass("errorBorder");
-			return;
-		  }
-		  else{
-			if($('#year_input').val().trim() != ""){
-				$('#filterText').text(" Filtered on " + $('#year_input').val());
-			}
-			$.ajax({
-			  url: '/get-link',
-			  type: 'GET',
-			  dataType: 'json',
-			  data: {'key' : keywordClicked, 'sub': subClicked, 'pred' : predClicked, 'filter':true, 'year' : $('#year_input').val(), 'year2' : $('year_input2')},
-			  success: function(result_data){
-			  $('.filter').resultHandlerFunction(result_data);
-			  }
-			});
-			$('#year_input').clearFilterInputs();
-		  }
-	   }
-  });
+    $('#filter').click(function() {
+        //$('#filter').myfunction();
+        var selected_dateType = $('input:radio[name=DateSearchType]:checked').val();
+        var year1 = $('#year_input').val();
+        var year2 = "";
+        console.log(selected_dateType);
+        if (selected_dateType == "range") {
+            year2 = $('#year_input2').val();
+            if (year2.trim() != "") {
+                if ((year2 > 9999) || (year2 < 1000)) {
+                    $('#year_input2').addClass("errorBorder");
+                    return;
+                }
+                if (year1 > year2) {
+                    $('#year_input2').addClass("errorBorder");
+                    return;
+                }
+            }
+        } else {
+            year2 = "";
+        }
+
+        if (year1.trim() != "") {
+            if ((year1 > 9999) || (year1 < 1000)) {
+                $('#year_input').addClass("errorBorder");
+                return;
+            } else {
+                if (year1.trim() != "") {
+                    var filteredOn = year1;
+                    if (year2.trim() != "")
+                        filteredOn += " - " + year2;
+                    $('#filterText').text(" Filtered on " + filteredOn);
+                }
+                $.ajax({
+                    url: '/get-link',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        'key': keywordClicked,
+                        'sub': subClicked,
+                        'pred': predClicked,
+                        'filter': true,
+                        'year': $('#year_input').val(),
+                        'year2': $('#year_input2').val()
+                    },
+                    success: function(result_data) {
+                        $('.filter').resultHandlerFunction(result_data);
+                    }
+                });
+                $('#year_input').clearFilterInputs();
+            }
+        }
+    });
 
     (function($) {
         $.fn.resultHandlerFunction = function(result_data) {
@@ -91,12 +108,12 @@ $(document).ready(function() {
                         matchStr = matchStr.replace(item.toUpperCase(), "<b>" + item.toUpperCase() + "</b>" + " ");
                         matchStr = matchStr.replace(item[0].toLowerCase() + item.slice(1), "<b>" + item[0].toLowerCase() + item.slice(1) + "</b>" + " ");
                     });
+
                     $(p_tag).append(matchStr);
                     $(block_tag).append(anchor_tag);
                     $(block_tag).append(p_tag);
                     $(block_tag).append(break_tag);
                     $("#results-div").append(block_tag);
-                    //console.log("Done");
                 });
             } else {
                 var p_tag = document.createElement("p");
@@ -111,6 +128,8 @@ $(document).ready(function() {
         $.fn.clearFilterInputs = function() {
             $('#year_input').removeClass("errorBorder");
             $('#year_input').val('');
+            $('#year_input2').removeClass("errorBorder");
+            $('#year_input2').val('');
         };
     })(jQuery);
 
@@ -129,27 +148,28 @@ $(document).ready(function() {
             e.preventDefault();
         }
     });
-	
-	$(".questionFormat").click(function(){
-		$('input[name="triple1"]').val("Alzheimer's disease");
-		var selectedObject = $(this).data("value");
-		if(!($.isNumeric(selectedObject)))
-			$('input[name="triple3"]').val(selectedObject);
-		else
-			  $('input[name="triple3"]').val('');
-		var selectedVerb = $(this).data("verb");
-		$('input[name="triple2"]').val(selectedVerb);
-	});
-	
-	
-	$('input[name="DateSearchType"]').click(function(){
-		var selected_dateType = $('input:radio[name=DateSearchType]:checked').val();
-		
-		if(selected_dateType == "range"){
-			alert("here");
-			$('input[name="year_input2"]').prop("disabled",false);
-		}
-	});
-	
-});
 
+    $(".questionFormat").click(function() {
+        $('input[name="triple1"]').val("Alzheimer's disease");
+        var selectedObject = $(this).data("value");
+        if (!($.isNumeric(selectedObject)))
+            $('input[name="triple3"]').val(selectedObject);
+        else
+            $('input[name="triple3"]').val('');
+        var selectedVerb = $(this).data("verb");
+        $('input[name="triple2"]').val(selectedVerb);
+    });
+
+
+    $('input[name="DateSearchType"]').click(function() {
+        var selected_dateType = $('input:radio[name=DateSearchType]:checked').val();
+        if (selected_dateType == "range") {
+            $('#year_input2').show();
+            $('#year_input').attr("placeholder", "Start");
+        } else {
+            $('#year_input2').hide();
+            $('#year_input').attr("placeholder", "Year");
+        }
+    });
+
+});

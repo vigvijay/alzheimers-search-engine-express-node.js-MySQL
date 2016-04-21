@@ -89,7 +89,7 @@
 									</div>
 									<div class="collapse navbar-collapse navbar-right" id="myNavbar">
 									    <ul class="nav navbar-nav">
-									     	<li class="active"><a href="/">Search Again <img src= "img/search_again.png" alt="Search Again"/></a></li>
+									     	<li class="active"><a href="/">Search Again <img src= "img/home.png" alt="Home"/></a></li>
 
 									    </ul>
 									</div>
@@ -106,13 +106,13 @@
 							<div class="banner-info text-center">
 								<h2><span class="grey">ALZHEIMERS</span> - Filter your results</h2>
 							</div>
-							<div class="banner-search col-md-offset-2 col-md-8 col-md-offset-2">
+							<div class="banner-search col-md-offset-1 col-md-10 col-md-offset-2">
 								<div class="col-md-3">
 									<div class="form-group">
 									<input type="text" class="form-control sellone" placeholder="Author">
 									 </div>
 								</div>
-								<div class="col-md-4">
+								<div class="col-md-3">
 									<div class="form-group">
 									  <input type="text" class="form-control selltwo" placeholder="Title">
 									</div>
@@ -122,16 +122,20 @@
 									  <input type="text" class="form-control selltwo" placeholder="Journal">
 									</div>
 								</div>
-								<div class="col-md-2">
-									<div class="form-group">
+								<div class="col-md-3">
+									<div class="form-group year-input">
 									  <input type="number" id="year_input" class="form-control selltwo"  min="1000" max="9999" placeholder="Year">
-									  <input type="number" name="year_input2" disabled class="form-control selltwo"  min="1000" max="9999" placeholder="Year">
+									  <input type="number" id="year_input2" class="form-control selltwo"  min="1000" max="9999" placeholder="End">
 									</div>
-									
+
 								</div>
 								<div class="col-md-3">
-									<input type="radio" name="DateSearchType" value="range" > Range </input>
-									<input type="radio" name="DateSearchType" value="exact" checked> Specific Year </input>
+									<div class="col-md-12 radioFont">
+										<input type="radio" name="DateSearchType" value="exact" checked> Specific Year </input>
+									</div>
+									<div class="col-md-12 radioFont">
+										<input type="radio" name="DateSearchType" value="range" > Range </input>
+									</div>
 									<div class="form-btn">
 										<button type="submit" id="filter">Filter</button>
 									</div>
@@ -185,7 +189,7 @@
 
 
 
-		
+
 		<section class="footer-line">
 			<div class="container">
 				<div class="row">
@@ -198,7 +202,6 @@
 		<script src="js/jquery.min.js"></script>
     	<script src="js/bootstrap.min.js"></script>
 		<script src="js/jquery-1.11.3.min.js"></script>
-		<script src="js/jquery-1.9.1.min.js"></script>
     	<script src="js/owl.carousel.js"></script>
 		<script src="js/jquery.quovolver.min.js"></script>
     	<script src="js/jquery.mixitup.js" type="text/javascript"></script>
