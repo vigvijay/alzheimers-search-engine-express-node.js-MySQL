@@ -34,7 +34,7 @@ var mysql = require('mysql');
 var pool = mysql.createPool({
     connectionLimit: 100, //important
     host: 'beat.comp.ae.keio.ac.jp',
-    port: ****,
+    port: *****,
     user: '*****',
     password: '*****',
     database: 'ad_reverb',
@@ -200,12 +200,26 @@ app.get('/get-link', function(req, res) {
         }
         console.log('connected as id ' + connection.threadId);
 
-        var where_clause = " ";
+        var where_clause = "";
         if (req.query.filter == "true") {
-            if (req.query.year2.trim() != "")
+          console.log("njnnjbkjn");
+          if (req.query.author.trim() != "") {
+              where_clause += " and authors like '%" + req.query.author + "%' ";
+          }
+         if (req.query.title.trim() != "") {
+           console.log("in");
+                where_clause += " and title like '%" + req.query.title + "%' ";
+                console.log(where_clause);
+            }
+             if (req.query.journal.trim() != "") {
+                  where_clause += " and journal like '%" + req.query.journal + "%' ";
+            }
+            if (req.query.year2.trim() != ""){
                 where_clause += " and year >= " + req.query.year + " and year <= " + req.query.year2;
-            else
+            }
+            else if(req.query.year2.trim() == "" && req.query.year.trim() != ""){
                 where_clause += " and year = " + req.query.year;
+            }
         }
 
         var queryEntries = [];
@@ -215,7 +229,7 @@ app.get('/get-link', function(req, res) {
         var querykey = [];
         querykey.push(req.query.key);
         console.log(where_clause);
-        connection.query("select s,p,o, triples.pmid, sentence, year from  triples, sentences, years where s = ? " + where_clause + " and p= ? and o= ? and triples.sent_id=sentences.sent_id and triples.pmid = years.pmid", (queryEntries), function(err, rows) {
+        connection.query("select s,p,o, triples.pmid, sentence, pubmed_article_info.year, pubmed_article_info.title from  triples, sentences, pubmed_article_info where s = ? " + where_clause + " and p= ? and o= ? and triples.sent_id=sentences.sent_id and triples.pmid = pubmed_article_info.pubmed_id", (queryEntries), function(err, rows) {
             connection.release();
             if (!err) {
                 var arr = [];
@@ -223,7 +237,8 @@ app.get('/get-link', function(req, res) {
                     arr.push({
                         'key': rows[dataObj].sentence,
                         'value': "http://www.ncbi.nlm.nih.gov/pubmed/?term=" + rows[dataObj].pmid,
-                        'queryEntries': querykey
+                        'queryEntries': querykey,
+                        'title': rows[dataObj].title
                     });
                 }
                 console.log(arr.length);

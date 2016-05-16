@@ -5,7 +5,6 @@ $(document).ready(function() {
     $('#year_input2').hide();
     $(document).keypress(function(e) {
         if (e.which == 13) {
-            console.log('You pressed enter!');
             $('#submitButton').trigger("click");
         }
     });
@@ -60,32 +59,29 @@ $(document).ready(function() {
             if ((year1 > 9999) || (year1 < 1000)) {
                 $('#year_input').addClass("errorBorder");
                 return;
-            } else {
-                if (year1.trim() != "") {
-                    var filteredOn = year1;
-                    if (year2.trim() != "")
-                        filteredOn += " - " + year2;
-                    $('#filterText').text(" Filtered on " + filteredOn);
-                }
-                $.ajax({
-                    url: '/get-link',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {
-                        'key': keywordClicked,
-                        'sub': subClicked,
-                        'pred': predClicked,
-                        'filter': true,
-                        'year': $('#year_input').val(),
-                        'year2': $('#year_input2').val()
-                    },
-                    success: function(result_data) {
-                        $('.filter').resultHandlerFunction(result_data);
-                    }
-                });
-                $('#year_input').clearFilterInputs();
             }
         }
+        $.ajax({
+            url: '/get-link',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                'key': keywordClicked,
+                'sub': subClicked,
+                'pred': predClicked,
+                'filter': true,
+                'year': $('#year_input').val(),
+                'year2': $('#year_input2').val(),
+                'author': $('#author').val(),
+                'title': $('#title').val(),
+                'journal': $('#journal').val()
+            },
+            success: function(result_data) {
+                $('.filter').resultHandlerFunction(result_data);
+                $('#year_input').clearFilterInputs();
+            }
+        });
+
     });
 
     (function($) {
@@ -96,7 +92,7 @@ $(document).ready(function() {
                     var block_tag = document.createElement("blockquote");
                     var anchor_tag = document.createElement("a");
                     var p_tag = document.createElement("p");
-                    $(anchor_tag).append("This is a dummy heading tag");
+                    $(anchor_tag).append(result_data[index].title);
                     $(anchor_tag).attr("href", result_data[index].value);
                     $(anchor_tag).attr("target", '_blank');
                     var break_tag = document.createElement("br");
@@ -126,10 +122,29 @@ $(document).ready(function() {
             return this;
         };
         $.fn.clearFilterInputs = function() {
+            var filteredOn = '';
+            if ($('#author').val().trim != '')
+                filteredOn += $('#author').val() + " | ";
+            if ($('#title').val().trim != '')
+                filteredOn += $('#title').val() + " | ";
+            if ($('#journal').val().trim != '')
+                filteredOn += $('#journal').val() + " | ";
+            if ($('#year_input').val().trim() != "") {
+                filteredOn += $('#year_input').val();
+                if ($('#year_input2').val().trim() != "")
+                    filteredOn += " - " + $('#year_input2').val();
+                //$('#filterText').text(" Filtered on " + filteredOn);
+            }
+            console.log(filteredOn);
+            $('#filterText').text(" Filtered on " + filteredOn);
+
             $('#year_input').removeClass("errorBorder");
             $('#year_input').val('');
             $('#year_input2').removeClass("errorBorder");
             $('#year_input2').val('');
+            $('#author').val('');
+            $('#title').val('');
+            $('#journal').val('');
         };
     })(jQuery);
 
